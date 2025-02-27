@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const axios = require('axios');
 
 const mariadb = require('mariadb');
 const pool = mariadb.createPool({
@@ -37,6 +38,20 @@ app.use(cors());
 
 app.get('/', (req, res) => {
         res.send('hello world!');
+});
+
+app.get('/say', (req, res) => {
+        const callCloudFunction = async () => {
+                try {
+                        const response = await axios.get('https://assignment-07-437928066275.us-central1.run.app',
+                        { params: { keyword: req.query.keyword } });
+                        res.send(response.data);
+                } catch (error) {
+                        console.error('Error calling function:', error);
+                }
+        };
+
+        callCloudFunction();
 });
 
 /**
